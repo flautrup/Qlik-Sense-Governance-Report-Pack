@@ -1,36 +1,70 @@
 <html>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-<body ng-app="Audit">
-     <div ng-controller="AuditTable">
-          <button ng-click="loadUserAccess()" class="btn btn-success btn-block">Load user accesses</button>
-          <table class="table table-hover">
-               <thead>
-                  <tr><th>UserId</th><th>Last Used</th></tr>
-               </thead>
-               <tbody>
-                  <tr ng-repeat="useraccess in useraccesses">
-                       <td>{{useraccess.user.userId}}</td>
-                       <td>{{useraccess.lastUsed}}</td>
-                  </tr>
-               </tbody>
-          </table>
 
-     </div>
-     <script>
-          var app=angular.module("Audit",[]);
-          app.controller("AuditTable", function($scope, $http){
-              $scope.loadUserAccess=function(){
-                  $http.get('/qrs/license/useraccesstype/full?xrfkey=aaaaaaaaaaaaaaaa', {
-                    withCredentials: true, headers: {'X-qlik-xrfkey':'aaaaaaaaaaaaaaaa'} }).success(function(data){
-                       $scope.useraccesses=data;
-                  }).error(function(){
-                       alert("An unexpected error occured!");
-                  });
-              }
-          });
-     </script>
+<head>
+    <!-- Angular Material style sheet -->
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.css">
+    <link rel="stylesheet" href="https://rawgit.com/daniel-nagy/md-data-table/master/dist/md-data-table.css">
+</head>
+
+<body ng-app="Audit">
+    <div ng-controller="AuditTable">
+        <md-toolbar layout-align="space-around">
+            <div class="md-toolbar-tools">
+                <h2>
+                  <span>License Audit Report</span>
+                </h2>
+                <span flex></span>
+                <md-button class="md-raised" ng-click="loadUserAccess()">Load user accesses</md-button>
+            </div>
+        </md-toolbar>
+        <md-input-container md-no-float>
+          <input class="md-body-2" placeholder="Search" ng-model="searchText">
+        </md-input-container>
+        <md-table-container>
+            <table md-table>
+                <thead md-head md-order="myOrder">
+                    <tr md-row>
+                        <th md-column md-order-by="user.userId">UserId</th>
+                        <th md-column md-order-by="lastUsed">Last Used</th>
+                    </tr>
+                </thead>
+                <tbody md-body>
+                    <tr md-row ng-repeat="useraccess in useraccesses | orderBy: myOrder | filter: searchText">
+                        <td md-cell>{{useraccess.user.userId}}</td>
+                        <td md-cell>{{useraccess.lastUsed}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </md-table-container>
+    </div>
+
+    <!-- Angular Material requires Angular.js Libraries -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-animate.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-aria.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-messages.min.js"></script>
+    <script src="https://rawgit.com/daniel-nagy/md-data-table/master/dist/md-data-table.js"></script>
+
+    <!-- Angular Material Library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.js"></script>
+
+    <!-- Load data from QRS API -->
+    <script>
+        var app = angular.module("Audit", ['ngMaterial', 'md.data.table']);
+        app.controller("AuditTable", function($scope, $http) {
+            $scope.loadUserAccess = function() {
+                $http.get('/qrs/license/useraccesstype/full?xrfkey=aaaaaaaaaaaaaaaa', {
+                    withCredentials: true,
+                    headers: {
+                        'X-qlik-xrfkey': 'aaaaaaaaaaaaaaaa'
+                    }
+                }).success(function(data) {
+                    $scope.useraccesses = data;
+                }).error(function() {
+                    alert("An unexpected error occured!");
+                });
+            }
+        });
+    </script>
 </body>
 <html>
