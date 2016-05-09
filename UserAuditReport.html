@@ -1,0 +1,47 @@
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<body ng-app="Audit">
+     <div ng-controller="AuditTable">
+          <button ng-click="loadUsers()" class="btn btn-success btn-block">Load user information</button>
+          <table class="table table-hover">
+               <thead>
+                  <tr><th>UserId</th><th>Attributes</th><th>Custom Properties</th></tr>
+               </thead>
+               <tbody>
+                  <tr ng-repeat="user in users">
+                       <td>{{user.userId}}</td>
+                       <td><table class="table">
+                            <tr ng-repeat="attribute in user.attributes">
+                              <td>{{attribute.attributeType}} = {{attribute.attributeValue}}</td>
+                              <tr>
+                            </table>
+                        </td>
+                        <td><table class="table">
+                             <tr ng-repeat="customProperty in user.customProperties">
+                               <td>{{customProperty.definition.name}} = {{customProperty.value}}</td>
+                               <tr>
+                             </table>
+                         </td>
+                  </tr>
+               </tbody>
+          </table>
+
+     </div>
+     <script>
+          var app=angular.module("Audit",[]);
+          app.controller("AuditTable", function($scope, $http){
+              $scope.loadUsers=function(){
+                  $http.get('/qrs/user/full?xrfkey=aaaaaaaaaaaaaaaa', {
+                    withCredentials: true, headers: {'X-qlik-xrfkey':'aaaaaaaaaaaaaaaa'} }).success(function(data){
+                       $scope.users=data;
+                  }).error(function(){
+                       alert("An unexpected error occured!");
+                  });
+              }
+          });
+     </script>
+</body>
+<html>

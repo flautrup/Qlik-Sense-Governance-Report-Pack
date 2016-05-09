@@ -1,0 +1,36 @@
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<body ng-app="Audit">
+     <div ng-controller="AuditTable">
+          <button ng-click="loadUserAccess()" class="btn btn-success btn-block">Load user accesses</button>
+          <table class="table table-hover">
+               <thead>
+                  <tr><th>UserId</th><th>Last Used</th></tr>
+               </thead>
+               <tbody>
+                  <tr ng-repeat="useraccess in useraccesses">
+                       <td>{{useraccess.user.userId}}</td>
+                       <td>{{useraccess.lastUsed}}</td>
+                  </tr>
+               </tbody>
+          </table>
+
+     </div>
+     <script>
+          var app=angular.module("Audit",[]);
+          app.controller("AuditTable", function($scope, $http){
+              $scope.loadUserAccess=function(){
+                  $http.get('/qrs/license/useraccesstype/full?xrfkey=aaaaaaaaaaaaaaaa', {
+                    withCredentials: true, headers: {'X-qlik-xrfkey':'aaaaaaaaaaaaaaaa'} }).success(function(data){
+                       $scope.useraccesses=data;
+                  }).error(function(){
+                       alert("An unexpected error occured!");
+                  });
+              }
+          });
+     </script>
+</body>
+<html>
