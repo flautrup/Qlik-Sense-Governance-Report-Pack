@@ -1,47 +1,84 @@
 <html>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-<body ng-app="Audit">
-     <div ng-controller="AuditTable">
-          <button ng-click="loadUsers()" class="btn btn-success btn-block">Load user information</button>
-          <table class="table table-hover">
-               <thead>
-                  <tr><th>UserId</th><th>Attributes</th><th>Custom Properties</th></tr>
-               </thead>
-               <tbody>
-                  <tr ng-repeat="user in users">
-                       <td>{{user.userId}}</td>
-                       <td><table class="table">
-                            <tr ng-repeat="attribute in user.attributes">
-                              <td>{{attribute.attributeType}} = {{attribute.attributeValue}}</td>
-                              <tr>
-                            </table>
-                        </td>
-                        <td><table class="table">
-                             <tr ng-repeat="customProperty in user.customProperties">
-                               <td>{{customProperty.definition.name}} = {{customProperty.value}}</td>
-                               <tr>
-                             </table>
-                         </td>
-                  </tr>
-               </tbody>
-          </table>
 
-     </div>
-     <script>
-          var app=angular.module("Audit",[]);
-          app.controller("AuditTable", function($scope, $http){
-              $scope.loadUsers=function(){
-                  $http.get('/qrs/user/full?xrfkey=aaaaaaaaaaaaaaaa', {
-                    withCredentials: true, headers: {'X-qlik-xrfkey':'aaaaaaaaaaaaaaaa'} }).success(function(data){
-                       $scope.users=data;
-                  }).error(function(){
-                       alert("An unexpected error occured!");
-                  });
-              }
-          });
-     </script>
+<head>
+    <!-- Angular Material style sheet -->
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.css">
+    <link rel="stylesheet" href="https://rawgit.com/daniel-nagy/md-data-table/master/dist/md-data-table.css">
+</head>
+
+<body ng-app="Audit">
+    <div ng-controller="AuditTable">
+        <md-toolbar layout-align="space-around">
+            <div class="md-toolbar-tools">
+                <h2>
+                 <span>License Audit Report</span>
+               </h2>
+                <span flex></span>
+                <md-button class="md-raised" ng-click="loadUsers()">Load users</md-button>
+            </div>
+        </md-toolbar>
+        <md-input-container md-no-float>
+            <input class="md-body-2" placeholder="Search" ng-model="searchText.userId">
+        </md-input-container>
+        <md-table-container>
+            <table md-table>
+                <thead md-head md-order="myOrder">
+                    <tr md-row>
+                        <th md-column md-order-by="userId">UserId</th>
+                        <th md-column>Attributes</th>
+                        <th md-column>Custom Properties</th>
+                    </tr>
+                </thead>
+                <tbody md-body>
+                    <tr md-row ng-repeat="user in users| orderBy: myOrder | filter: searchText">
+                        <td md-cell>{{user.userId}}</td>
+                        <td md-cell>
+                            <md-list>
+                                <md-list-item ng-repeat="attribute in user.attributes">
+                                    {{attribute.attributeType}} = {{attribute.attributeValue}}
+                                </md-list-item>
+                            </md-list>
+                        </td>
+                        <td md-cell>
+                            <md-list>
+                                <md-list-item ng-repeat="customProperty in user.customProperties">
+                                    {{customProperty.definition.name}} = {{customProperty.value}}
+                                </md-list-item>
+                            </md-list>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+    </div>
+    <!-- Angular Material requires Angular.js Libraries -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-animate.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-aria.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-messages.min.js"></script>
+    <script src="https://rawgit.com/daniel-nagy/md-data-table/master/dist/md-data-table.js"></script>
+
+    <!-- Angular Material Library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.js"></script>
+
+    <!-- Load data from QRS API -->
+
+    <script>
+        var app = angular.module("Audit", ['ngMaterial', 'md.data.table']);
+        app.controller("AuditTable", function($scope, $http) {
+            $scope.loadUsers = function() {
+                $http.get('/qrs/user/full?xrfkey=aaaaaaaaaaaaaaaa', {
+                    withCredentials: true,
+                    headers: {
+                        'X-qlik-xrfkey': 'aaaaaaaaaaaaaaaa'
+                    }
+                }).success(function(data) {
+                    $scope.users = data;
+                }).error(function() {
+                    alert("An unexpected error occured!");
+                });
+            }
+        });
+    </script>
 </body>
 <html>
