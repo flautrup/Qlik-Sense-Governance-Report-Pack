@@ -15,6 +15,7 @@
                </h2>
                 <span flex></span>
                 <md-button class="md-raised" ng-click="loadUsers()">Load users</md-button>
+                <md-button class="md-raised" ng-csv="getArray" csv-header="getHeader()" filename="{{ filename }}" field-separator="{{separator}}" decimal-separator="{{decimalSeparator}}">Export CSV</md-button>
             </div>
         </md-toolbar>
         <md-input-container md-no-float>
@@ -56,7 +57,9 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-animate.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-aria.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-messages.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular-sanitize.min.js"></script>
     <script src="https://rawgit.com/daniel-nagy/md-data-table/master/dist/md-data-table.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ng-csv/0.3.6/ng-csv.min.js"></script>
 
     <!-- Angular Material Library -->
     <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.js"></script>
@@ -64,8 +67,12 @@
     <!-- Load data from QRS API -->
 
     <script>
-        var app = angular.module("Audit", ['ngMaterial', 'md.data.table']);
+        var app = angular.module("Audit", ['ngMaterial', 'md.data.table', "ngSanitize", "ngCsv"]);
         app.controller("AuditTable", function($scope, $http) {
+            $scope.filename = "Export.csv";
+            $scope.separator = ",";
+            $scope.decimalSeparator = ".";
+
             $scope.loadUsers = function() {
                 $http.get('/qrs/user/full?xrfkey=aaaaaaaaaaaaaaaa', {
                     withCredentials: true,
@@ -78,6 +85,38 @@
                     alert("An unexpected error occured!");
                 });
             }
+            $scope.getArray = function() {
+                var index;
+                var count = 0;
+                var userArray = [];
+                for (index = 0; index < $scope.users.length; index++) {
+                    count++;
+                    var user = $scope.users[index].userId;
+
+                    for (attrindex = 0; attrindex < $scope.users[index].attributes.length; attrindex++) {
+                        userArray[count] = {
+                            "user": user,
+                            "attribute": $scope.users[index].attributes[attrindex].attributeType + "=" + $scope.users[index].attributes[attrindex].attributeValue,
+                            "properties": ""
+                        }
+                        count++;
+                    }
+
+                    for (propindex = 0; propindex < $scope.users[index].customProperties.length; propindex++) {
+                        userArray[count] = {
+                            "user": user,
+                            "attribute": "",
+                            "properties": $scope.users[index].customProperties[propindex].definition.name + "=" + $scope.users[index].customProperties[propindex].value
+                        }
+                        count++;
+                    }
+                }
+                return userArray;
+            }
+
+            $scope.getHeader = function() {
+                return ["User", "Attributes", "Custom Properties"]
+            };
         });
     </script>
 </body>
