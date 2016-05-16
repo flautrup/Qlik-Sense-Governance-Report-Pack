@@ -29,7 +29,7 @@
                         <th md-column md-order-by="comment">Description</th>
                         <th md-column md-order-by="type">Type</th>
                         <th md-column md-order-by="disabled">Disabled</th>
-                        <th md-column md-order-by="schemaPath">Usage</th>
+                        <th md-column md-order-by="category">category</th>
                         <th md-column md-order-by="resourceFilter">Resource filter</th>
                         <th md-column md-order-by="actions">Actions</th>
                         <th md-column md-order-by="rule">Conditions</th>
@@ -41,9 +41,9 @@
                         <td md-cell>{{rule.comment}}</td>
                         <td md-cell>{{rule.type}}</td>
                         <td md-cell>{{rule.disabled}}</td>
-                        <td md-cell>{{rule.schemaPath}}</td>
+                        <td md-cell>{{rule.category}}</td>
                         <td md-cell>{{rule.resourceFilter}}</td>
-                        <td md-cell>{{rule.action}}</td>
+                        <td md-cell>{{rule.actions}}</td>
                         <td md-cell>{{rule.rule}}</td>
                     </tr>
                 </tbody>
