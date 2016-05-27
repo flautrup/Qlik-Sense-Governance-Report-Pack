@@ -43,7 +43,7 @@
                         <td md-cell>{{rule.disabled}}</td>
                         <td md-cell>{{rule.category}}</td>
                         <td md-cell>{{rule.resourceFilter}}</td>
-                        <td md-cell>{{rule.actions}}</td>
+                        <td md-cell>{{rule.actiondecoded}}</td>
                         <td md-cell>{{rule.rule}}</td>
                     </tr>
                 </tbody>
@@ -71,6 +71,16 @@
             $scope.separator = ",";
             $scope.decimalSeparator = ".";
 
+            function arrayFromMask(nMask) {
+                // nMask must be between -2147483648 and 2147483647
+                if (nMask > 0x7fffffff || nMask < -0x80000000) {
+                    aFromMask=[true,true,true,true,true,true,true,true,true,true];
+                    return aFromMask;
+                }
+                for (var nShifted = nMask, aFromMask = []; nShifted; aFromMask.push(Boolean(nShifted & 1)), nShifted >>>= 1);
+                return aFromMask;
+            }
+
             $scope.loadSystemRules = function() {
                 $http.get('/qrs/systemrule/full?xrfkey=aaaaaaaaaaaaaaaa', {
                     withCredentials: true,
@@ -78,6 +88,21 @@
                         'X-qlik-xrfkey': 'aaaaaaaaaaaaaaaa'
                     }
                 }).success(function(data) {
+                    var index = 0;
+                    var actionText = ['Create', 'Read', 'Update', 'Delete', 'Export', 'Publish', 'ChangeOwner', 'ChangeRole', 'ExportData'];
+                    //Add support for bitmask on actions
+                    for (index = 0; index < data.length; index++) {
+                        var tmpActionsArr = arrayFromMask(data[index].actions);
+                        for (var actionIndex = 0; actionIndex < tmpActionsArr.length; actionIndex++) {
+                            if (tmpActionsArr[actionIndex]) {
+                                if(actionIndex>0) {
+                                data[index].actiondecoded = data[index].actiondecoded+','+actionText[actionIndex];
+                              } else {
+                                data[index].actiondecoded = actionText[actionIndex];
+                              }
+                            }
+                        }
+                    }
                     $scope.systemrules = data;
                 }).error(function() {
                     alert("An unexpected error occured!");
