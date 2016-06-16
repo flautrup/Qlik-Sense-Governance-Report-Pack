@@ -60,7 +60,7 @@
             $scope.decimalSeparator = ".";
 
             $scope.loadUserAccess = function() {
-                $http.get('/qrs/license/useraccesstype/full?xrfkey=aaaaaaaaaaaaaaaa', {
+                $http.get('../../qrs/license/useraccesstype/full?xrfkey=aaaaaaaaaaaaaaaa', {
                     withCredentials: true,
                     headers: {
                         'X-qlik-xrfkey': 'aaaaaaaaaaaaaaaa'

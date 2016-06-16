@@ -82,23 +82,26 @@
             }
 
             $scope.loadSystemRules = function() {
-                $http.get('/qrs/systemrule/full?xrfkey=aaaaaaaaaaaaaaaa', {
+                $http.get('../../qrs/systemrule/full?xrfkey=aaaaaaaaaaaaaaaa', {
                     withCredentials: true,
                     headers: {
                         'X-qlik-xrfkey': 'aaaaaaaaaaaaaaaa'
                     }
                 }).success(function(data) {
+                    var first=true;
                     var index = 0;
-                    var actionText = ['Create', 'Read', 'Update', 'Delete', 'Export', 'Publish', 'ChangeOwner', 'ChangeRole', 'ExportData'];
+                    var actionText = ['Create', 'Read', 'Update', 'Delete', 'Export', 'Publish', 'ChangeOwner', 'ChangeRole', 'ExportData',''];
                     //Add support for bitmask on actions
                     for (index = 0; index < data.length; index++) {
                         var tmpActionsArr = arrayFromMask(data[index].actions);
+                        first=true;
                         for (var actionIndex = 0; actionIndex < tmpActionsArr.length; actionIndex++) {
                             if (tmpActionsArr[actionIndex]) {
-                                if(actionIndex>0) {
+                                if(!first) {
                                 data[index].actiondecoded = data[index].actiondecoded+','+actionText[actionIndex];
                               } else {
                                 data[index].actiondecoded = actionText[actionIndex];
+                                first=false;
                               }
                             }
                         }
