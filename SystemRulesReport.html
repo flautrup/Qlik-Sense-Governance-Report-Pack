@@ -112,20 +112,27 @@
                 });
             }
 
+            //Need updating
             $scope.getArray = function() {
                 var index;
-                var userArray = [];
-                for (index = 0; index < $scope.useraccesses.length; index++) {
-                    userArray[index] = {
-                        "user": $scope.useraccesses[index].user.userId,
-                        "lastused": $scope.useraccesses[index].lastUsed
+                var ruleArray = [];
+                for (index = 0; index < $scope.systemrules.length; index++) {
+                    ruleArray[index] = {
+                        "Name": $scope.systemrules[index].name,
+                        "Description": $scope.systemrules[index].comment,
+                        "Type": $scope.systemrules[index].type,
+                        "Dissabed": $scope.systemrules[index].disabled,
+                        "Category": $scope.systemrules[index].category,
+                        "Resource Filter": $scope.systemrules[index].resourceFilter,
+                        "Actions": $scope.systemrules[index].actiondecoded,
+                        "Condition": $scope.systemrules[index].rule
                     }
                 }
-                return userArray;
+                return ruleArray;
             }
 
             $scope.getHeader = function() {
-                return ["User", "Last used"]
+                return ["Name", "Description", "Type", "Dissabled","Category","Resource Filter","Actions", "Condition"]
             };
         });
     </script>
