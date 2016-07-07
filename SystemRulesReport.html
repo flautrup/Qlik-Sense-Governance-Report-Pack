@@ -74,7 +74,7 @@
             function arrayFromMask(nMask) {
                 // nMask must be between -2147483648 and 2147483647
                 if (nMask > 0x7fffffff || nMask < -0x80000000) {
-                    aFromMask=[true,true,true,true,true,true,true,true,true,true];
+                    aFromMask = [true, true, true, true, true, true, true, true, true, true];
                     return aFromMask;
                 }
                 for (var nShifted = nMask, aFromMask = []; nShifted; aFromMask.push(Boolean(nShifted & 1)), nShifted >>>= 1);
@@ -88,21 +88,21 @@
                         'X-qlik-xrfkey': 'aaaaaaaaaaaaaaaa'
                     }
                 }).success(function(data) {
-                    var first=true;
+                    var first = true;
                     var index = 0;
-                    var actionText = ['Create', 'Read', 'Update', 'Delete', 'Export', 'Publish', 'ChangeOwner', 'ChangeRole', 'ExportData',''];
+                    var actionText = ['Create', 'Read', 'Update', 'Delete', 'Export', 'Publish', 'ChangeOwner', 'ChangeRole', 'ExportData', ''];
                     //Add support for bitmask on actions
                     for (index = 0; index < data.length; index++) {
                         var tmpActionsArr = arrayFromMask(data[index].actions);
-                        first=true;
+                        first = true;
                         for (var actionIndex = 0; actionIndex < tmpActionsArr.length; actionIndex++) {
                             if (tmpActionsArr[actionIndex]) {
-                                if(!first) {
-                                data[index].actiondecoded = data[index].actiondecoded+','+actionText[actionIndex];
-                              } else {
-                                data[index].actiondecoded = actionText[actionIndex];
-                                first=false;
-                              }
+                                if (!first) {
+                                    data[index].actiondecoded = data[index].actiondecoded + ',' + actionText[actionIndex];
+                                } else {
+                                    data[index].actiondecoded = actionText[actionIndex];
+                                    first = false;
+                                }
                             }
                         }
                     }
@@ -132,9 +132,10 @@
             }
 
             $scope.getHeader = function() {
-                return ["Name", "Description", "Type", "Dissabled","Category","Resource Filter","Actions", "Condition"]
+                return ["Name", "Description", "Type", "Dissabled", "Category", "Resource Filter", "Actions", "Condition"]
             };
         });
     </script>
 </body>
-<html>
+
+</html>
